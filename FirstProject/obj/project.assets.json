@@ -19,6 +19,7 @@
       "packagesPath": "/Users/ruben/.nuget/packages/",
       "outputPath": "/Users/ruben/projects/dotnet/freeman_mvc/FirstProject/obj/",
       "projectStyle": "PackageReference",
+      "UsingMicrosoftNETSdk": false,
       "configFilePaths": [
         "/Users/ruben/.nuget/NuGet/NuGet.Config"
       ],
@@ -43,8 +44,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "all"
-      },
-      "SdkAnalysisLevel": "9.0.100"
+      }
     },
     "frameworks": {
       "net9.0": {
