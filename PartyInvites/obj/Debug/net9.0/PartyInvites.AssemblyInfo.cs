@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PartyInvites")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb18c78e401a960a3da12ffa95cae1162b7ba335")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a820caa0039505e976e3bcf0d1d60f553c7d129a")]
 [assembly: System.Reflection.AssemblyProductAttribute("PartyInvites")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PartyInvites")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

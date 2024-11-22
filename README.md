@@ -447,3 +447,156 @@ public class HomeController : Controller
 
 > I have added the HttpGet attribute to the existing RsvpForm action method, which declares that this method should be used only for GET requests. I then added an overloaded version of the RsvpForm method, which accepts a GuestResponse object. I applied the HttpPost attribute to this method, which declares it will deal with POST requests. I explain how these additions to the listing work in the following sections. I also imported the PartyInvites.Models namespace—this is just so I can refer to the GuestResponse model type without needing to qualify the class name.
 
+##### Step 10: Model Binding
+
+> One of the application goals is to present a summary page with details of who is attending the party, which means that I need to keep track of the responses that I receive. I am going to do this by creating an in-memory collection of objects. This isn’t useful in a real application.
+
+/Models/Repository.cs
+```cs
+namespace PartyInvites.Models;  
+  
+public static class Repository  
+{  
+    private static List<GuestResponse> responses = new();  
+      
+    public static IEnumerable<GuestResponse> Responses => responses;  
+  
+    public static void AddResponse(GuestResponse response)  
+    {  
+        Console.WriteLine(response);  
+        responses.Add(response);  
+    }  
+}
+```
+
+The form content will be stored in a new List
+
+##### Step 11: Storing Responses
+
+HomeController.cs
+```cs
+using Microsoft.AspNetCore.Mvc;  
+using PartyInvites.Models;  
+  
+namespace PartyInvites.Controllers;  
+  
+public class HomeController : Controller  
+{  
+    public IActionResult Index() => View();  
+      
+    [HttpGet]  
+    public ViewResult RsvpForm() => View();  
+  
+    [HttpPost]  
+    public ViewResult RsvpForm(GuestResponse guestResponse)  
+    {  
+        Repository.AddResponse(guestResponse);  
+        return View("Thanks", guestResponse);  
+    }  
+}
+```
+
+##### Step 11: Adding the Thanks View
+
+/Views/Home/Thanks.cshtml
+```html
+@model PartyInvites.Models.GuestResponse  
+  
+@{  
+    Layout = null;  
+}  
+  
+<!doctype html>  
+<html lang="en">  
+    <head>  
+        <meta charset="UTF-8">  
+        <meta name="viewport"  
+              content="width=device-width" />  
+        <title>Thanks</title>  
+    </head>  
+    <body>  
+        <div>  
+            <h1>Thank you @Model?.Name!</h1>  
+            @if (Model?.WillAttend == true)  
+            {  
+                @:It's great that you are coming. The drinks are already in the fridge!  
+            }  
+            else  
+            {  
+                @:Sorry to hear that you can't make it. Thanks for letting us know.  
+            }  
+        </div>  
+        Click <a asp-action="ListResponses">here</a> to see who is coming.  
+    </body>  
+</html>
+```
+
+##### Step 12: Displaying Responses
+
+HomeController.cs
+```cs
+using Microsoft.AspNetCore.Mvc;  
+using PartyInvites.Models;  
+  
+namespace PartyInvites.Controllers;  
+  
+public class HomeController : Controller  
+{  
+    public IActionResult Index() => View();  
+      
+    [HttpGet]  
+    public ViewResult RsvpForm() => View();  
+  
+    [HttpPost]  
+    public ViewResult RsvpForm(GuestResponse guestResponse)  
+    {  
+        Repository.AddResponse(guestResponse);  
+        return View("Thanks", guestResponse);  
+    }  
+      
+    public ViewResult ListResponses() => View(Repository.Responses.Where(r => r.WillAttend == true));  
+}
+```
+
+/Views/Home/ListResponses.cshtml
+```html
+@model IEnumerable<PartyInvites.Models.GuestResponse>  
+  
+@{  
+    Layout = null;  
+}  
+  
+<!doctype html>  
+<html lang="en">  
+    <head>  
+        <meta charset="UTF-8">  
+        <meta name="viewport"  
+              content="width=device-width">  
+        <title>Responses</title>  
+    </head>  
+    <body>  
+        <h2>Here is the list of people attending the party</h2>  
+        <table>  
+            <thead>  
+	            <tr>  
+	                <th>Name</th>  
+	                <th>Email</th>  
+	                <th>Phone</th>  
+	            </tr>  
+            </thead>  
+            <tbody>  
+                @foreach (PartyInvites.Models.GuestResponse r in Model)  
+                {  
+                    <tr>  
+                        <td>@r.Name</td>  
+                        <td>@r.Email</td>  
+                        <td>@r.Phone</td>  
+                    </tr>  
+                }  
+            </tbody>  
+        </table>  
+    </body>  
+</html>
+```
+
+##### Step 13: Adding Validation
